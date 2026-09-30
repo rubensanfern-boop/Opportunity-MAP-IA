@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapa de Oportunidades com IA</title>
+  <meta name="description" content="Descobre e partilha oportunidades de negocio detetadas em cidades ao redor do mundo, potenciadas por Inteligencia Artificial." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">&#x1F916; IA + Negocio</div>
+      <h1>Mapa de Oportunidades com IA</h1>
+      <p class="hero-sub">Descobre e partilha oportunidades de negocio em cidades de todo o mundo, potenciadas por Inteligencia Artificial.</p>
+      <button id="btn-open-modal" class="btn-primary"><span class="btn-icon">+</span> Publicar Oportunidade</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card"><span class="stat-num" id="stat-total">-</span><span class="stat-label">Oportunidades</span></div>
+      <div class="stat-card"><span class="stat-num" id="stat-cities">-</span><span class="stat-label">Cidades</span></div>
+      <div class="stat-card"><span class="stat-num" id="stat-likes">-</span><span class="stat-label">Likes</span></div>
+    </div>
+  </header>
+
+  <section class="filters-bar">
+    <div class="filters-inner">
+      <div class="filter-group">
+        <label for="filter-city">&#x1F3D9; Cidade</label>
+        <input type="text" id="filter-city" placeholder="Ex: Lisboa" autocomplete="off" />
+      </div>
+      <div class="filter-group">
+        <label for="filter-country">&#x1F30D; Pais</label>
+        <input type="text" id="filter-country" placeholder="Ex: Portugal" autocomplete="off" />
+      </div>
+      <div class="filter-group">
+        <label for="filter-category">&#x1F3F7; Categoria</label>
+        <select id="filter-category">
+          <option value="">Todas</option>
+          <option value="Saude">Saude</option>
+          <option value="Educacao">Educacao</option>
+          <option value="Agricultura">Agricultura</option>
+          <option value="Transporte">Transporte</option>
+          <option value="Comercio">Comercio</option>
+          <option value="Ambiente">Ambiente</option>
+          <option value="Tecnologia">Tecnologia</option>
+          <option value="Financas">Financas</option>
+          <option value="Habitacao">Habitacao</option>
+          <option value="Turismo">Turismo</option>
+          <option value="Outro">Outro</option>
+        </select>
+      </div>
+      <button id="btn-clear-filters" class="btn-ghost">&#x2715; Limpar</button>
+    </div>
+  </section>
+
+  <main class="main-content">
+    <div id="loading-state" class="loading-state">
+      <div class="spinner"></div>
+      <p>A carregar oportunidades...</p>
+    </div>
+    <div id="empty-state" class="empty-state" style="display:none;">
+      <div class="empty-icon">&#x1F331;</div>
+      <h2>Nenhuma oportunidade encontrada</h2>
+      <p>Se o primeiro a publicar uma oportunidade!</p>
+      <button class="btn-primary" onclick="openModal()">Publicar agora</button>
+    </div>
+    <div id="cards-grid" class="cards-grid" style="display:none;"></div>
+  </main>
+
+  <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true" style="display:none;">
+    <div class="modal">
+      <button class="modal-close" id="btn-close-modal" aria-label="Fechar">&#x2715;</button>
+      <div class="modal-header">
+        <div class="modal-icon">&#x1F4A1;</div>
+        <h2>Nova Oportunidade</h2>
+        <p>Preenche todos os campos para publicar a tua oportunidade.</p>
+      </div>
+      <form id="opportunity-form" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="field-name">Nome / Titulo <span class="req">*</span></label>
+            <input type="text" id="field-name" name="name" placeholder="Ex: App de diagnostico rapido" maxlength="100" autocomplete="off" />
+            <span class="field-error" id="error-name"></span>
+          </div>
+          <div class="form-group">
+            <label for="field-category">Categoria <span class="req">*</span></label>
+            <select id="field-category" name="category">
+              <option value="">Selecionar...</option>
+              <option value="Saude">Saude</option>
+              <option value="Educacao">Educacao</option>
+              <option value="Agricultura">Agricultura</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Comercio">Comercio</option>
+              <option value="Ambiente">Ambiente</option>
+              <option value="Tecnologia">Tecnologia</option>
+              <option value="Financas">Financas</option>
+              <option value="Habitacao">Habitacao</option>
+              <option value="Turismo">Turismo</option>
+              <option value="Outro">Outro</option>
+            </select>
+            <span class="field-error" id="error-category"></span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="field-city">Cidade <span class="req">*</span></label>
+            <input type="text" id="field-city" name="city" placeholder="Ex: Lisboa" maxlength="80" autocomplete="off" />
+            <span class="field-error" id="error-city"></span>
+          </div>
+          <div class="form-group">
+            <label for="field-country">Pais <span class="req">*</span></label>
+            <input type="text" id="field-country" name="country" placeholder="Ex: Portugal" maxlength="80" autocomplete="off" />
+            <span class="field-error" id="error-country"></span>
+          </div>
+        </div>
+        <div class="form-group full">
+          <label for="field-problem">Problema Detetado <span class="req">*</span></label>
+          <textarea id="field-problem" name="problem" placeholder="Descreve o problema que identificaste nesta cidade..." maxlength="500" rows="3"></textarea>
+          <span class="char-count" id="count-problem">0/500</span>
+          <span class="field-error" id="error-problem"></span>
+        </div>
+        <div class="form-group full">
+          <label for="field-ai-solution">Solucao com IA <span class="req">*</span></label>
+          <textarea id="field-ai-solution" name="ai_solution" placeholder="Como a IA pode resolver este problema?" maxlength="500" rows="3"></textarea>
+          <span class="char-count" id="count-ai-solution">0/500</span>
+          <span class="field-error" id="error-ai-solution"></span>
+        </div>
+        <div class="form-group full">
+          <label for="field-potential">Potencial de Mercado <span class="req">*</span></label>
+          <input type="text" id="field-potential" name="potential" placeholder="Ex: Alto - mercado de 500M em Portugal" maxlength="200" autocomplete="off" />
+          <span class="field-error" id="error-potential"></span>
+        </div>
+        <div id="form-global-error" class="global-error" style="display:none;"></div>
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button type="submit" id="btn-submit" class="btn-primary">
+            <span id="submit-label">&#x1F680; Publicar</span>
+            <span id="submit-spinner" style="display:none;">A publicar...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <footer class="footer"><p>&#x1F30D; Mapa de Oportunidades com IA &middot; Dados guardados em tempo real no <strong>Supabase</strong></p></footer>
+  <script src="app.js"></script>
+</body>
+</html>
